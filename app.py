@@ -82,17 +82,17 @@ def obter_nota_por_id(id):
     return jsonify(retorna_valor)
 
 @app.post('/adicao', methods=['POST'] , tags=[adicao_tag])
-def adicao_nota(_nome, _descricao):
+def adicao_nota():
     """Função que adiciona nota no banco de dados usando"""
     requisicao_de_dados = request.get_json() # obtendo o dado do cliente
-    Nota.adicao_nota(requisicao_de_dados["nome", requisicao_de_dados["descricao"]])
+    Nota.adicao_nota(requisicao_de_dados["nome"], requisicao_de_dados["descricao"])
     resposta = Response("Nota adicionada", 201, mimetype='application/json')
     return resposta
 
 @app.put('/notas/<int:nota_id>', methods=['PUT'] , tags=[atualizacao_tag])
 def atualizar_nota(id):
     """Função para editar a nota usando o id"""
-    requisicao_de_dados = request.get_json
+    requisicao_de_dados = request.get_json()
     Nota.atualizacao_nota(id, requisicao_de_dados['nome'], requisicao_de_dados['descricao'])
     resposta = Response("Nota atualizada", status=200, mimetype='application/json')
     return resposta
