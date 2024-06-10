@@ -76,7 +76,7 @@ def obter_notas():
     """Função que obtem todas as notas no banco de dados"""
     return jsonify({'Notas' : Nota.query.all()})
 
-@app.get('/notas/<int:nota_id>', methods=['GET'] , tags=[especifico_tag])
+@app.get('/<int:nota_id>', methods=['GET'] , tags=[especifico_tag])
 def obter_nota_por_id(id):
     retorna_valor = Nota.obter_nota(id) 
     return jsonify(retorna_valor)
@@ -89,7 +89,7 @@ def adicao_nota():
     resposta = Response("Nota adicionada", 201, mimetype='application/json')
     return resposta
 
-@app.put('/notas/<int:nota_id>', methods=['PUT'] , tags=[atualizacao_tag])
+@app.put('/atualizacao/<int:nota_id>', methods=['PUT'] , tags=[atualizacao_tag])
 def atualizar_nota(id):
     """Função para editar a nota usando o id"""
     requisicao_de_dados = request.get_json()
@@ -97,7 +97,7 @@ def atualizar_nota(id):
     resposta = Response("Nota atualizada", status=200, mimetype='application/json')
     return resposta
 
-@app.delete('/notas/<int:nota_id>', methods=['DELETE'] , tags=[deletar_tag])
+@app.delete('/<int:nota_id>', methods=['DELETE'] , tags=[deletar_tag])
 def remocao_nota(id):
     """Função para deletar a nota do banco de dados"""
     Nota.deletar_nota(id)
