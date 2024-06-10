@@ -6,7 +6,7 @@ import json
 
 info = Info(title="Back End", version="0.1")
 app = OpenAPI(__name__, info=info)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///notas.sqlite3'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///nota.sqlite3'
 
 CORS(app)
 
@@ -14,14 +14,20 @@ db = SQLAlchemy(app)
 
 # A classe Nota vai herdar o db.Model do SQLAlchemy
 class Nota(db.Model):
+    __tablename__ = "nota"
+
     id = db.Column(db.Integer, primary_key=True)
     nome = db.Column(db.String(50))
     descricao = db.Column(db.String(100))
     
+    def __init__(self, nome, descricao):
+        self.nome = nome
+        self.descricao = descricao
+
     def json(self):
         return {'id': self.id, 'nome': self.nome, 
-                'descricao': self.descricao}
-    
+                'descricao': self.descricao}    
+
     def obter_todas_notas():
         """Função que obtem todas as notas no banco de dados"""
         return [Nota.json(nota) for nota in Nota.query.all()]
@@ -98,6 +104,7 @@ def remocao_nota(id):
     resposta = Response("Nota deletada", status=200, mimetype='application/json')
     return resposta
 
-if __name__ == "__main__":
+@app.before_first_request
+def create_table():
     db.create_all()
     app.run(debug=True)
