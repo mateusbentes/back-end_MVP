@@ -50,8 +50,12 @@ class Nota(db.Model):
         nota_a_atualizar = descricao
         db.session.commit()
 
-    def deletar_nota(id):
+    def deletar_nota():
         """Função para deletar a nota do banco de dados usando o id da nota como o parametro"""
+        id_de_requisicao = request.get_json()
+        if 'id' not in id_de_requisicao:
+            return jsonify({"message": "ID is required"}), 400
+        id = id_de_requisicao['id']
         nota_a_deletar = Nota.query.filter_by(id=id).first() # Filtrar a nota pelo id
         db.session.delete(nota_a_deletar) # Deleta a nota no banco de dados
         db.session.commit() # Fazer o commit da nova mudança no banco de dados
@@ -98,10 +102,10 @@ def atualizar_nota(id):
     resposta = Response("Nota atualizada", status=200, mimetype='application/json')
     return resposta
 
-@app.delete('/<int:id>', methods=['DELETE'] , tags=[deletar_tag])
-def remocao_nota(id):
+@app.delete('/', methods=['DELETE'] , tags=[deletar_tag])
+def remocao_nota():
     """Função para deletar a nota do banco de dados"""
-    Nota.deletar_nota(id)
+    Nota.deletar_nota()
     resposta = Response("Nota deletada", status=200, mimetype='application/json')
     return resposta
 
