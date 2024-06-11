@@ -1,4 +1,6 @@
 #Meu ambiente virtual
-.myvenv/
+myvenv/
 # Cache de python
-.__pycache__/*
+__pycache__/
+
+nota.sqlite3
