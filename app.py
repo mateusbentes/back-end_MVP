@@ -74,14 +74,14 @@ def api():
 @app.get('/', methods=['GET'] , tags=[tudo_tag])
 def obter_notas():
     """Função que obtem todas as notas no banco de dados"""
-    return jsonify({'Notas' : Nota.query.all()})
+    return jsonify({'Notas' : Nota.obter_todas_notas()})
 
 @app.get('/<int:nota_id>', methods=['GET'] , tags=[especifico_tag])
 def obter_nota_por_id(id):
     retorna_valor = Nota.obter_nota(id) 
     return jsonify(retorna_valor)
 
-@app.post('/adicao', methods=['POST'] , tags=[adicao_tag])
+@app.post('/', methods=['POST'] , tags=[adicao_tag])
 def adicao_nota():
     """Função que adiciona nota no banco de dados usando"""
     requisicao_de_dados = request.get_json() # obtendo o dado do cliente
