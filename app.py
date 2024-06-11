@@ -97,7 +97,7 @@ def atualizar_nota(id):
     resposta = Response("Nota atualizada", status=200, mimetype='application/json')
     return resposta
 
-@app.delete('/<int:nota_id>', methods=['DELETE'] , tags=[deletar_tag])
+@app.delete('/<int:id>', methods=['DELETE'] , tags=[deletar_tag])
 def remocao_nota(id):
     """Função para deletar a nota do banco de dados"""
     Nota.deletar_nota(id)
