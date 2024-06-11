@@ -32,27 +32,28 @@ class Nota(db.Model):
         """Função que obtem todas as notas no banco de dados"""
         return [Nota.json(nota) for nota in Nota.query.all()]
     
-    def obter_nota(_id):
+    def obter_nota(id):
         """Funcão para obter a nota usando o id da nota como parametro"""
-        Nota.json(Nota.query.filter_by(id=_id).first())
+        Nota.json(Nota.query.filter_by(id=id).first())
 
-    def adicao_nota(_nome, _descricao):
+    def adicao_nota(nome, descricao):
         """Função para adicionar nota no banco de dados usando _nome e _descricao como parametros"""
         #criando a instancia da noissa Nota como construtor
-        nova_nota = Nota(nome=_nome, descricao=_descricao)
+        nova_nota = Nota(nome=nome, descricao=descricao)
         db.session.add(nova_nota) # adiciona nova nota na seção do banco de dados
         db.session.commit() # fazer o commita das mudanças no banco de dados
 
-    def atualizacao_nota(_id, _nome, _descricao):
+    def atualizacao_nota(id, nome, descricao):
         """Função para atualizar os detalhes da nota usando o id, nome e descrição como oarametros"""
-        nota_a_atualizar = Nota.query.filter_by(id=_id).first()
-        nota_a_atualizar = _nome
-        nota_a_atualizar = _descricao
+        nota_a_atualizar = Nota.query.filter_by(id=id).first()
+        nota_a_atualizar = nome
+        nota_a_atualizar = descricao
         db.session.commit()
 
-    def deletar_nota(_id):
+    def deletar_nota(id):
         """Função para deletar a nota do banco de dados usando o id da nota como o parametro"""
-        Nota.query.filter_by(id=_id).delete() # Filtrar a nota pelo id e deletar
+        nota_a_deletar = Nota.query.filter_by(id=id).first() # Filtrar a nota pelo id
+        db.session.delete(nota_a_deletar) # Deleta a nota no banco de dados
         db.session.commit() # Fazer o commit da nova mudança no banco de dados
 
 # definindo tags
@@ -76,7 +77,7 @@ def obter_notas():
     """Função que obtem todas as notas no banco de dados"""
     return jsonify({'Notas' : Nota.obter_todas_notas()})
 
-@app.get('/<int:nota_id>', methods=['GET'] , tags=[especifico_tag])
+@app.get('/<int:id>', methods=['GET'] , tags=[especifico_tag])
 def obter_nota_por_id(id):
     retorna_valor = Nota.obter_nota(id) 
     return jsonify(retorna_valor)
@@ -89,7 +90,7 @@ def adicao_nota():
     resposta = Response("Nota adicionada", 201, mimetype='application/json')
     return resposta
 
-@app.put('/atualizacao/<int:nota_id>', methods=['PUT'] , tags=[atualizacao_tag])
+@app.put('/atualizacao/<int:id>', methods=['PUT'] , tags=[atualizacao_tag])
 def atualizar_nota(id):
     """Função para editar a nota usando o id"""
     requisicao_de_dados = request.get_json()
