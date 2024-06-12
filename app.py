@@ -50,7 +50,7 @@ class Nota(db.Model):
         db.session.add(nova_nota) # adiciona nova nota na seção do banco de dados
         db.session.commit() # fazer o commit das mudanças no banco de dados
 
-    def atualizacao_nota(titulo, texto):
+    def edicao_nota(titulo, texto):
         """Função para atualizar os detalhes da nota usando o id, titulo e descrição como oarametros"""
         # Definição do id da requisição como um json
         id_de_requisicao = request.get_json()
@@ -106,10 +106,10 @@ def adicao_nota():
     return resposta
 
 @app.put('/', methods=['PUT'] , tags=[atualizacao_tag])
-def atualizar_nota():
+def editar_nota():
     """Função para editar a nota usando o id"""
     requisicao_de_dados = request.get_json() # obtendo o dado do cliente
-    Nota.atualizacao_nota(requisicao_de_dados["titulo"], requisicao_de_dados["texto"])
+    Nota.edicao_nota(requisicao_de_dados["titulo"], requisicao_de_dados["texto"])
     resposta = Response("Nota atualizada", status=200, mimetype='application/json')
     return resposta
 
