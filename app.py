@@ -42,7 +42,7 @@ class Nota(db.Model):
         if 'id' not in id_de_requisicao:
             return jsonify({"message": "ID is required"}), 400
         id = id_de_requisicao['id']
-        Nota.json(Nota.query.filter_by(id=id).first()) # Procura no banco de dados
+        Nota.json(Nota.query.filter_by(id=id).first()) # Procurar a a nota no banco de dados pelo id
 
     def adicao_nota(titulo, texto):
         """Função para adicionar nota no banco de dados usando titulo e texto como parametros"""
@@ -57,7 +57,7 @@ class Nota(db.Model):
         if 'id' not in id_de_requisicao:
             return jsonify({"message": "ID is required"}), 400
         id = id_de_requisicao['id']
-        nota_a_atualizar = Nota.query.filter_by(id=id).first() # Procura no banco de dados
+        nota_a_atualizar = Nota.query.filter_by(id=id).first() # Procurar a a nota no banco de dados pelo id
         nota_a_atualizar = titulo
         nota_a_atualizar = texto
         db.session.commit() # fazer o commit das mudanças no banco de dados
@@ -69,7 +69,7 @@ class Nota(db.Model):
         if 'id' not in id_de_requisicao:
             return jsonify({"message": "ID is required"}), 400
         id = id_de_requisicao['id']
-        nota_a_deletar = Nota.query.filter_by(id=id).first() # Filtrar a nota pelo id
+        nota_a_deletar = Nota.query.filter_by(id=id).first() # Procurar a a nota no banco de dados pelo id
         db.session.delete(nota_a_deletar) # Deleta a nota no banco de dados
         db.session.commit() # Fazer o commit da nova mudança no banco de dados
 
@@ -108,8 +108,8 @@ def adicao_nota():
 @app.put('/', methods=['PUT'] , tags=[atualizacao_tag])
 def atualizar_nota():
     """Função para editar a nota usando o id"""
-    requisicao_de_dados = request.get_json()
-    Nota.atualizacao_nota(requisicao_de_dados['titulo'], requisicao_de_dados['texto'])
+    requisicao_de_dados = request.get_json() # obtendo o dado do cliente
+    Nota.atualizacao_nota(requisicao_de_dados["titulo"], requisicao_de_dados["texto"])
     resposta = Response("Nota atualizada", status=200, mimetype='application/json')
     return resposta
 
