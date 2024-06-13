@@ -36,18 +36,16 @@ class Nota(db.Model):
         """Função que obtem todas as notas no banco de dados"""
         return [Nota.json(nota) for nota in Nota.query.all()]
     
-    def obter_nota():
+    def obter_nota(id):
         """Funcão para obter a nota usando o id da nota como parametro"""
-        # Definição do id da requisição como um json
-        id_de_requisicao = request.get_json()
-        id = id_de_requisicao['id']
-        Nota.json(Nota.query.filter_by(id=id).first()) # Procurar a a nota no banco de dados pelo id
+        Nota.json(Nota.query.filter_by(id=id).first().json()) # Procurar a a nota no banco de dados pelo id
 
     def adicao_nota(titulo, texto):
         """Função para adicionar nota no banco de dados usando titulo e texto como parametros"""
         nova_nota = Nota(titulo=titulo, texto=texto) # Criação da instancia da nossa Nota como um construtor
         db.session.add(nova_nota) # adiciona nova nota na seção do banco de dados
         db.session.commit() # fazer o commit das mudanças no banco de dados
+        return nova_nota
 
     def edicao_nota(id, titulo, texto):
         """Função para atualizar os detalhes da nota usando o id, titulo e descrição como parametros"""
@@ -88,15 +86,16 @@ def obter_notas():
 @app.get('/', methods=['GET'] , tags=[especifico_tag])
 def obter_nota_por_id():
     """Função que obtem nota específica no banco de dados"""
-    retorna_valor = Nota.obter_nota() 
-    return jsonify(retorna_valor)
+    requisicao_de_dados = request.get_json() # obtendo o dado do cliente
+    id = requisicao_de_dados.get('id')
+    return jsonify(Nota.obter_nota(id))
 
 @app.post('/', methods=['POST'] , tags=[adicao_tag])
 def adicao_nota():
     """Função que adiciona nota no banco de dados usando"""
     requisicao_de_dados = request.get_json() # obtendo o dado do cliente
-    Nota.adicao_nota(requisicao_de_dados["titulo"], requisicao_de_dados["texto"])
-    resposta = Response("Nota adicionada", 201, mimetype='application/json')
+    nova_nota = Nota.adicao_nota(requisicao_de_dados["titulo"], requisicao_de_dados["texto"])
+    resposta = jsonify(nova_nota.json())
     return resposta
 
 @app.put('/', methods=['PUT'] , tags=[atualizacao_tag])
