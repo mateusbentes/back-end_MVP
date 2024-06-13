@@ -4,7 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 import json
 
-info = Info(title="Back End", version="0.1")
+info = Info(title="Api o bloco de notas", version="1.0")
 app = OpenAPI(__name__, info=info)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///nota.sqlite3'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -34,27 +34,25 @@ class Nota(db.Model):
 
     def obter_todas_notas():
         """Função que obtem todas as notas no banco de dados"""
-        return [Nota.json(nota) for nota in Nota.query.all()]
+        return [Nota.json(nota) for nota in Nota.query.all()] # Retorna a busca te todas as notas
     
     def obter_nota(id):
         """Funcão para obter a nota usando o id da nota como parametro"""
-        Nota.json(Nota.query.filter_by(id=id).first().json()) # Procurar a a nota no banco de dados pelo id
+        Nota.json(Nota.query.filter_by(id=id).first().json()) # Procura a a nota no banco de dados pelo id como json
 
     def adicao_nota(titulo, texto):
         """Função para adicionar nota no banco de dados usando titulo e texto como parametros"""
         nova_nota = Nota(titulo=titulo, texto=texto) # Criação da instancia da nossa Nota como um construtor
-        db.session.add(nova_nota) # adiciona nova nota na seção do banco de dados
-        db.session.commit() # fazer o commit das mudanças no banco de dados
-        return nova_nota
+        db.session.add(nova_nota) # Adiciona nova nota na seção do banco de dados
+        db.session.commit() # Fazer o commit das mudanças no banco de dados
+        return nova_nota # Retorna a nova nota
 
     def edicao_nota(id, titulo, texto):
         """Função para atualizar os detalhes da nota usando o id, titulo e descrição como parametros"""
-        nota_a_atualizar = Nota.query.filter_by(id=id).first() # Procurar a a nota no banco de dados pelo id
-        nota_a_atualizar.titulo = titulo
-        print(titulo)
-        nota_a_atualizar.texto = texto
-        print(texto)
-        db.session.commit() # fazer o commit das mudanças no banco de dados
+        nota_a_atualizar = Nota.query.filter_by(id=id).first() # Procura a a nota no banco de dados pelo id
+        nota_a_atualizar.titulo = titulo # Atualiza no banco de dados o novo titulo
+        nota_a_atualizar.texto = texto # Atualiza no banco de dados o novo texto
+        db.session.commit() # Faz o commit das mudanças no banco de dados
 
     def deletar_nota():
         """Função para deletar a nota do banco de dados usando o id da nota como o parametro"""
@@ -86,14 +84,14 @@ def obter_notas():
 @app.get('/', methods=['GET'] , tags=[especifico_tag])
 def obter_nota_por_id():
     """Função que obtem nota específica no banco de dados"""
-    requisicao_de_dados = request.get_json() # obtendo o dado do cliente
+    requisicao_de_dados = request.get_json() # Obtem o dado do cliente
     id = requisicao_de_dados.get('id')
     return jsonify(Nota.obter_nota(id))
 
 @app.post('/', methods=['POST'] , tags=[adicao_tag])
 def adicao_nota():
     """Função que adiciona nota no banco de dados usando"""
-    requisicao_de_dados = request.get_json() # obtendo o dado do cliente
+    requisicao_de_dados = request.get_json() # Obtem o dado do cliente
     nova_nota = Nota.adicao_nota(requisicao_de_dados["titulo"], requisicao_de_dados["texto"])
     resposta = jsonify(nova_nota.json())
     return resposta
@@ -101,7 +99,7 @@ def adicao_nota():
 @app.put('/', methods=['PUT'] , tags=[atualizacao_tag])
 def editar_nota():
     """Função para editar a nota usando o id"""
-    requisicao_de_dados = request.get_json() # obtendo o dado do cliente
+    requisicao_de_dados = request.get_json() # Obtem o dado do cliente
     id = requisicao_de_dados.get('id')
     titulo = requisicao_de_dados.get('titulo')
     texto = requisicao_de_dados.get('texto')
