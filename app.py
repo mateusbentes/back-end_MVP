@@ -7,6 +7,7 @@ import json
 info = Info(title="Back End", version="0.1")
 app = OpenAPI(__name__, info=info)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///nota.sqlite3'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 CORS(app)
 
@@ -39,8 +40,6 @@ class Nota(db.Model):
         """Funcão para obter a nota usando o id da nota como parametro"""
         # Definição do id da requisição como um json
         id_de_requisicao = request.get_json()
-        if 'id' not in id_de_requisicao:
-            return jsonify({"message": "ID is required"}), 400
         id = id_de_requisicao['id']
         Nota.json(Nota.query.filter_by(id=id).first()) # Procurar a a nota no banco de dados pelo id
 
@@ -50,24 +49,19 @@ class Nota(db.Model):
         db.session.add(nova_nota) # adiciona nova nota na seção do banco de dados
         db.session.commit() # fazer o commit das mudanças no banco de dados
 
-    def edicao_nota(titulo, texto):
-        """Função para atualizar os detalhes da nota usando o id, titulo e descrição como oarametros"""
-        # Definição do id da requisição como um json
-        id_de_requisicao = request.get_json()
-        if 'id' not in id_de_requisicao:
-            return jsonify({"message": "ID is required"}), 400
-        id = id_de_requisicao['id']
+    def edicao_nota(id, titulo, texto):
+        """Função para atualizar os detalhes da nota usando o id, titulo e descrição como parametros"""
         nota_a_atualizar = Nota.query.filter_by(id=id).first() # Procurar a a nota no banco de dados pelo id
-        nota_a_atualizar = titulo
-        nota_a_atualizar = texto
+        nota_a_atualizar.titulo = titulo
+        print(titulo)
+        nota_a_atualizar.texto = texto
+        print(texto)
         db.session.commit() # fazer o commit das mudanças no banco de dados
 
     def deletar_nota():
         """Função para deletar a nota do banco de dados usando o id da nota como o parametro"""
         # Definição do id da requisição como um json
         id_de_requisicao = request.get_json()
-        if 'id' not in id_de_requisicao:
-            return jsonify({"message": "ID is required"}), 400
         id = id_de_requisicao['id']
         nota_a_deletar = Nota.query.filter_by(id=id).first() # Procurar a a nota no banco de dados pelo id
         db.session.delete(nota_a_deletar) # Deleta a nota no banco de dados
@@ -109,9 +103,11 @@ def adicao_nota():
 def editar_nota():
     """Função para editar a nota usando o id"""
     requisicao_de_dados = request.get_json() # obtendo o dado do cliente
-    Nota.edicao_nota(requisicao_de_dados["titulo"], requisicao_de_dados["texto"])
-    resposta = Response("Nota atualizada", status=200, mimetype='application/json')
-    return resposta
+    id = requisicao_de_dados.get('id')
+    titulo = requisicao_de_dados.get('titulo')
+    texto = requisicao_de_dados.get('texto')
+    resposta = Nota.edicao_nota(id, titulo, texto)
+    return jsonify(resposta)
 
 @app.delete('/', methods=['DELETE'] , tags=[deletar_tag])
 def remocao_nota():
