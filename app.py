@@ -4,7 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 import json
 
-info = Info(title="Api o bloco de notas", version="1.0")
+info = Info(title="Api do bloco de notas", version="1.0")
 app = OpenAPI(__name__, info=info)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///nota.sqlite3'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
