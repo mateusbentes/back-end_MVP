@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    ports:
+      - "5000:5000"
+    volumes:
+      - .:/app
+    environment:
+      FLASK_ENV: development
+      SQLALCHEMY_DATABASE_URI: "mysql+pymysql://usuario:senha@db/flaskdb"
+    depends_on:
+      - db
+
+  db:
+    image: mariadb:10.5
+    restart: always
+    environment:
+      MARIADB_ROOT_PASSWORD: senharoot
+      MARIADB_DATABASE: flaskdb
+      MARIADB_USER: usuario
+      MARIADB_PASSWORD: senha
+    volumes:
+      - db_data:/var/lib/mysql
+
+volumes:
+  db_data:
